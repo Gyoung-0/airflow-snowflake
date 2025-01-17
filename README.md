@@ -3,3 +3,4 @@
 
 ### NameGenderCSVtoSnowflake
 <img width="1628" alt="스크린샷 2025-01-17 오후 6 25 42" src="https://github.com/user-attachments/assets/3438dec5-d1f7-4183-bd96-77bf64772fdd" />
+실패하는 경우는 variables의 오타였다
