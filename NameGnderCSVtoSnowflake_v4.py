@@ -3,7 +3,7 @@ from airflow.operators.python import PythonOperator
 from airflow.models import Variable
 from datetime import datetime, timedelta
 import logging
-import requests
+import boto3
 import snowflake.connector
 
 
@@ -27,15 +27,22 @@ def get_snowflake_connection():
 
 def extract(**context):
     """
-    URL에서 데이터를 추출합니다.
+    S3에서 데이터를 추출합니다.
     """
-    link = context["params"]["url"]
-    task_instance = context['task_instance']
-    execution_date = context['execution_date']
-
-    logging.info(f"Executing extract task at {execution_date}")
-    f = requests.get(link)
-    return f.text
+    bucket_name = Variable.get("S3_BUCKET_NAME")
+    file_key = Variable.get("S3_FILE_KEY")
+    logging.info(f"Extracting file from S3: Bucket={bucket_name}, Key={file_key}")
+    
+    s3 = boto3.client(
+        's3',
+        aws_access_key_id=Variable.get("AWS_ACCESS_KEY_ID"),
+        aws_secret_access_key=Variable.get("AWS_SECRET_KEY"),
+        region_name='us-west-2'
+    )
+    response = s3.get_object(Bucket=bucket_name, Key=file_key)
+    text = response['Body'].read().decode('utf-8')
+    logging.info("Extracted data successfully from S3")
+    return text
 
 
 def transform(**context):
@@ -99,9 +106,6 @@ dag = DAG(
 extract_task = PythonOperator(
     task_id='extract',
     python_callable=extract,
-    params={
-        'url': Variable.get("csv_url")
-    },
     dag=dag
 )
 

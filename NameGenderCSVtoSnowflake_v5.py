@@ -5,7 +5,7 @@ from airflow.decorators import task
 from datetime import datetime, timedelta
 import snowflake.connector
 import logging
-import requests
+import boto3
 
 
 def get_snowflake_connection():
@@ -24,11 +24,24 @@ def get_snowflake_connection():
 
 
 @task
-def extract(url):
-    logging.info(f"Extracting data from URL: {url}")
-    f = requests.get(url)
-    logging.info("Data extracted successfully")
-    return f.text
+def extract():
+    """
+    S3에서 데이터를 추출합니다.
+    """
+    bucket_name = Variable.get("S3_BUCKET_NAME")
+    file_key = Variable.get("S3_FILE_KEY")
+    logging.info(f"Extracting file from S3: Bucket={bucket_name}, Key={file_key}")
+    
+    s3 = boto3.client(
+        's3',
+        aws_access_key_id=Variable.get("AWS_ACCESS_KEY_ID"),
+        aws_secret_access_key=Variable.get("AWS_SECRET_KEY"),
+        region_name=Variable.get("AWS_REGION", "us-west-2")
+    )
+    response = s3.get_object(Bucket=bucket_name, Key=file_key)
+    text = response['Body'].read().decode('utf-8')
+    logging.info("Data extracted successfully from S3")
+    return text
 
 
 @task
@@ -66,7 +79,7 @@ def load(schema, table, records):
 
 
 with DAG(
-    dag_id='namegender_snowflake_v5',
+    dag_id='namegender_snowflake_v5_s3',
     start_date=datetime(2022, 10, 6),  # 날짜가 미래인 경우 실행이 안됨
     schedule='0 2 * * *',  # 매일 새벽 2시 실행
     max_active_runs=1,
@@ -77,10 +90,9 @@ with DAG(
     }
 ) as dag:
 
-    url = Variable.get("csv_url")
     schema = Variable.get("SNOWFLAKE_SCHEMA")
     table = Variable.get("SNOWFLAKE_TABLE_NAME")
 
     # Task Pipeline
-    lines = transform(extract(url))
+    lines = transform(extract())
     load(schema, table, lines)
