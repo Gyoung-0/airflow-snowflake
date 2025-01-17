@@ -7,7 +7,7 @@
 
 
 ### UpdateSymbol
-#### 미국 야후 주식 정보 올리기
+#### 미국 애플 주식 정보 올리기
 <img width="1623" alt="스크린샷 2025-01-17 오후 6 38 25" src="https://github.com/user-attachments/assets/7af99313-2d8d-4223-9aae-dfb73ec56c48" />
 
 
