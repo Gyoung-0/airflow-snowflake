@@ -12,4 +12,8 @@
 
 
 <img width="963" alt="스크린샷 2025-01-17 오후 7 16 24" src="https://github.com/user-attachments/assets/b13919bb-d20b-40dc-b79d-53d481402fd6" />
+
 잘 작동하는 거 확인 내일 한번더 확인해서 1월 17일 갱신되는지 확인해보겠습니다.
+
+<img width="1658" alt="스크린샷 2025-01-18 오후 4 30 42" src="https://github.com/user-attachments/assets/b1b20044-5d07-4aa4-817f-f8a5e8fd44cf" />
+다음날 올라오는거 확인
