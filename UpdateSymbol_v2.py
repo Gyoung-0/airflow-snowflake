@@ -80,7 +80,7 @@ CREATE TABLE {schema}.{table} (
 
 
 with DAG(
-    dag_id='UpdateSymbol_Snowflake',
+    dag_id='UpdateSymbol_Snowflake_v2',
     start_date=datetime(2023, 5, 30),
     catchup=False,
     tags=['API'],
@@ -88,4 +88,4 @@ with DAG(
 ) as dag:
 
     results = get_historical_prices("AAPL")
-    load(Variable.get("SNOWFLAKE_SCHEMA"), "stock_info", results)
+    load(Variable.get("SNOWFLAKE_SCHEMA"), "stock_info_v2", results)
